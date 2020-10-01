@@ -16,7 +16,6 @@ window.onmessage = event => {
     }
 };
 
-
 async function fetchPJData() {
     let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
 
@@ -34,9 +33,9 @@ async function fetchPJData() {
                 fetchImageToArray(index, pj.image_url, imgArray)
                     .then(()=>{
                         imageFinishCount++;
-                        console.log("finish count:" + imageFinishCount)
+                        console.log("image load finish:" + imageFinishCount)
                         if(imageFinishCount == projectListLength) {
-                            console.log("finish to get all images!!!!!!")
+                            console.log("finish to get all images!")
                             parent.postMessage(
                                 {
                                     pluginMessage: {
@@ -52,7 +51,6 @@ async function fetchPJData() {
             });
         })
 }
-
 
 async function fetchImageToArray(index, image_url, resultList) {
     let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
@@ -78,6 +76,9 @@ async function fetchProjectsJSON() {
         var obj = JSON.parse(pjListJsonStr);
         resolve(obj);
     });
+
+    // ---- Cross Origin Problem ----
+
     // let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
     // // let api_url = "https://api.makuake.com/v2/projects"
     // let api_url = "https://api.makuake.com/v2/projects?page=1&per_page=15&category_code=product&sort=collected_money&is_ongoing=true"
