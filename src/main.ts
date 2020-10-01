@@ -5,33 +5,15 @@ Promise.all([
 .then( ()=> main() )
 
 function main(){
-	figma.showUI(__html__, { visible: false })
-	figma.ui.postMessage({ type: 'fetchProjectsJSON' })
-	// figma.closePlugin()
-}
-
-figma.ui.onmessage = async msg => {
-	switch (msg.type) {
-		case 'onFetchProjectsData':
-			onFetchPrjectObj(msg)
-			break;
-	}
-};
-
-function onFetchPrjectObj(msg) {
-	let jsonList: Object[] = msg.projects
-	let imageList: Uint8Array[] = msg.images
-
-	let dataList: ProjectData[] = []
-	for (var i = 0; i < jsonList.length; i++) {
-		dataList.push(new ProjectData(jsonList[i], imageList[i]))
-	}
-
-	getPjComponentsFromPage().forEach((pjComp, i) => {
-		let maxIndex = jsonList.length - 1
-		var loopIndex: number = maxIndex < i ? (i % jsonList.length) : i
-		pjComp.setData(dataList[loopIndex])
-	})
+	const requester = new Requester()
+	requester.fetchProjectData()
+		.then(dataList => {			
+			getPjComponentsFromPage().forEach((pjComp, i) => {
+				let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
+				pjComp.setData(dataList[loopIndex])
+			})
+			figma.closePlugin()
+		})
 }
 
 function getPjComponentsFromPage() : ProjectComponent[] {

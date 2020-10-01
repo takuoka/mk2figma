@@ -65,6 +65,35 @@ class ProjectData {
         this.image = image;
     }
 }
+class Requester {
+    constructor() {
+        // network.html
+        figma.showUI(__html__, { visible: false });
+    }
+    fetchProjectData() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this._fetchProjectsData(dataList => resolve(dataList));
+            });
+        });
+    }
+    _fetchProjectsData(onSuccess) {
+        figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
+            switch (msg.type) {
+                case 'onFetchProjectsData':
+                    let jsonList = msg.projects;
+                    let imageList = msg.images;
+                    let dataList = [];
+                    for (var i = 0; i < jsonList.length; i++) {
+                        dataList.push(new ProjectData(jsonList[i], imageList[i]));
+                    }
+                    onSuccess(dataList);
+                    break;
+            }
+        });
+        figma.ui.postMessage({ type: 'fetchProjectsJSON' });
+    }
+}
 const Util = {
     formatAsJPY: function (money) {
         var str = money.toString();
@@ -79,28 +108,14 @@ Promise.all([
 ])
     .then(() => main());
 function main() {
-    figma.showUI(__html__, { visible: false });
-    figma.ui.postMessage({ type: 'fetchProjectsJSON' });
-    // figma.closePlugin()
-}
-figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
-    switch (msg.type) {
-        case 'onFetchProjectsData':
-            onFetchPrjectObj(msg);
-            break;
-    }
-});
-function onFetchPrjectObj(msg) {
-    let jsonList = msg.projects;
-    let imageList = msg.images;
-    let dataList = [];
-    for (var i = 0; i < jsonList.length; i++) {
-        dataList.push(new ProjectData(jsonList[i], imageList[i]));
-    }
-    getPjComponentsFromPage().forEach((pjComp, i) => {
-        let maxIndex = jsonList.length - 1;
-        var loopIndex = maxIndex < i ? (i % jsonList.length) : i;
-        pjComp.setData(dataList[loopIndex]);
+    const requester = new Requester();
+    requester.fetchProjectData()
+        .then(dataList => {
+        getPjComponentsFromPage().forEach((pjComp, i) => {
+            let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
+            pjComp.setData(dataList[loopIndex]);
+        });
+        figma.closePlugin();
     });
 }
 function getPjComponentsFromPage() {
