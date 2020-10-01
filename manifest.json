@@ -2,6 +2,6 @@
   "name": "mk2figma",
   "id": "892639798700535620",
   "api": "1.0.0",
-  "main": "code.js",
-  "ui": "ui.html"
+  "main": "main.js",
+  "ui": "network.html"
 }

@@ -2,7 +2,7 @@
   "name": "mk2figma",
   "version": "1.0.0",
   "description": "Your Figma Plugin",
-  "main": "code.js",
+  "main": "main.js",
   "scripts": {
     "build": "tsc -p tsconfig.json"
   },
