@@ -12,42 +12,16 @@ window.onmessage = event => {
 
         case 'fetchProjectsJSON':
             fetchPJData();
-        //     fetchProjectsJSON(obj => {
-        //         parent.postMessage({pluginMessage: {
-        //             type: 'onFetchProjectListObject',
-        //             object: obj
-        //         }}, '*')
-        //     });
-            break;
-
-        case 'fetchImage':
-            fetchImage(img => {
-                parent.postMessage(
-                    {
-                        pluginMessage: {
-                            type: 'onFetchImage',
-                            image: img
-                        }
-                    },
-                    '*'
-                );
-            });
             break;
     }
 };
 
 
 async function fetchPJData() {
-    let imgArray = [];
-
     let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
 
-    // fetch(proxyurl + request, fetchParams)
-    //     .then(response => {
-    //         return response.json();
-    //     })
-
     var projectListLength = 0;
+    let imgArray = [];
 
     fetchProjectsJSON()
         .then(async result => {
@@ -119,28 +93,5 @@ async function fetchProjectsJSON() {
     //     })
 }
 
-
-function fetchImage(onSuccess) {
-    let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
-    // const sample_img_url = "https://hayabusa.io/makuake/upload/user/regist2020/03/25/833856/main_833856.fit-scale.png?width=175&height=175&version=1597815242&pq=false&format=png&ttl=31536000&force"
-    const sample_img_url = "https://hayabusa.io/makuake/upload/project/11489/main_11489.jpg?fit=scale\u0026format=jpg\u0026ttl=31536000\u0026version=1601473507\u0026force"
-
-    console.log("fetch image...")
-    fetch(proxyurl + sample_img_url)
-        .then(response => {
-            console.log("succeed to fetch")
-            return response.arrayBuffer()
-        })
-        .then(arrayBuffer => {
-            console.log("succeed to array buffer!!")
-            console.log(arrayBuffer)
-            let uint8array = new Uint8Array(arrayBuffer)
-            onSuccess(uint8array)
-        })
-        .catch(err => {
-            console.log("fetch error!")
-            console.log(err)
-        })
-}
 
 </script>

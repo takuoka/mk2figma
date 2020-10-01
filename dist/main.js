@@ -44,9 +44,6 @@ figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
         case 'onFetchProjectsData':
             onFetchPrjectObj(msg);
             break;
-        case 'onFetchImage':
-            onFetchImage(msg.image);
-            break;
     }
 });
 // ---------------------------------------------------------------------------------------------
@@ -91,12 +88,6 @@ function setImage(target, imgData) {
 // ---------------------------------------------------------------------------------------------
 // Experiment
 // ---------------------------------------------------------------------------------------------
-// figma.ui.postMessage({ type: 'fetchImage' })
-function onFetchImage(image) {
-    let img = image;
-    let rect = exam_get_first_thumb_node();
-    setImage(rect, img);
-}
 function exam_get_first_thumb_node() {
     for (const node of figma.currentPage.children) {
         if (node.name == "@Project") {

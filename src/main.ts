@@ -47,10 +47,6 @@ figma.ui.onmessage = async msg => {
 		case 'onFetchProjectsData':
 			onFetchPrjectObj(msg)
 			break;
-
-		case 'onFetchImage':
-			onFetchImage(msg.image)
-			break;
 	}
 };
 
@@ -107,13 +103,6 @@ function setImage(target: SceneNode, imgData: Uint8Array) {
 // ---------------------------------------------------------------------------------------------
 // Experiment
 // ---------------------------------------------------------------------------------------------
-
-// figma.ui.postMessage({ type: 'fetchImage' })
-function onFetchImage(image: Uint8Array) {
-	let img: Uint8Array = image;
-	let rect = exam_get_first_thumb_node()
-	setImage(rect, img)
-}
 
 function exam_get_first_thumb_node() : RectangleNode {
 	for (const node of figma.currentPage.children) {
