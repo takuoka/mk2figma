@@ -7,72 +7,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var proms = figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" });
-proms.then(() => main());
-function main() {
-    figma.showUI(__html__, { visible: false });
-    figma.ui.postMessage({ type: 'fetchProjectsJSON' });
-    // figma.closePlugin()
-}
-function onFetchPrjectObj(msg) {
-    console.log("---onFetchPrjectObj---");
-    console.log(msg);
-    let projectJsonList = msg.projects;
-    let imageList = msg.images;
-    let projects = [];
-    for (var i = 0; i < projectJsonList.length; i++) {
-        projects.push(new ProjectData(projectJsonList[i], imageList[i]));
+class ProjectComponent {
+    constructor(projectFrame) {
+        this.frame = projectFrame;
+        this.imageNode = projectFrame.findOne(n => n.name == "@thumbnail");
+        this.titleNode = projectFrame.findOne(n => n.name == "@title");
     }
-    console.log(projects);
-    getPjComponents().forEach((pjComp, i) => {
-        fillPjComponent(pjComp, projects[i]); //👋 TODO:ループ
-    });
-}
-function fillPjComponent(pjFrame, pjData) {
-    console.log("---fillPjComponent----");
-    console.log(pjData);
-    const imageNode = pjFrame.findOne(n => n.name == "@thumbnail");
-    setImage(imageNode, pjData.image);
-    const titleNode = pjFrame.findOne(n => n.name == "@title");
-    titleNode.characters = pjData.json["title"];
-}
-// ---------------------------------------------------------------------------------------------
-// Bind
-// ---------------------------------------------------------------------------------------------
-figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
-    switch (msg.type) {
-        case 'onFetchProjectsData':
-            onFetchPrjectObj(msg);
-            break;
+    setData(data) {
+        setImage(this.imageNode, data.image);
+        this.titleNode.characters = data.json["title"];
     }
-});
-// ---------------------------------------------------------------------------------------------
+}
 // Util
-// ---------------------------------------------------------------------------------------------
-class ProjectData {
-    constructor(pj, image) {
-        this.json = pj;
-        this.image = image;
-    }
-}
-function getPjComponents() {
-    var pjFrameList = [];
-    for (const node of figma.currentPage.children) {
-        if (node.name == "@Project") {
-            pjFrameList.push(node);
-        }
-    }
-    return pjFrameList;
-}
-function getPjComponentsFromSelection() {
-    var pjFrameList = [];
-    for (const node of figma.currentPage.selection) {
-        if (node.name == "@Project") {
-            pjFrameList.push(node);
-        }
-    }
-    return pjFrameList;
-}
 function setImage(target, imgData) {
     const imageHash = figma.createImage(imgData).hash;
     const currentFills = target['fills'];
@@ -85,15 +31,43 @@ function setImage(target, imgData) {
     };
     target['fills'] = [newFill];
 }
-// ---------------------------------------------------------------------------------------------
-// Experiment
-// ---------------------------------------------------------------------------------------------
-function exam_get_first_thumb_node() {
+class ProjectData {
+    constructor(pj, image) {
+        this.json = pj;
+        this.image = image;
+    }
+}
+figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" })
+    .then(() => main());
+function main() {
+    figma.showUI(__html__, { visible: false });
+    figma.ui.postMessage({ type: 'fetchProjectsJSON' });
+    // figma.closePlugin()
+}
+figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
+    switch (msg.type) {
+        case 'onFetchProjectsData':
+            onFetchPrjectObj(msg);
+            break;
+    }
+});
+function onFetchPrjectObj(msg) {
+    let jsonList = msg.projects;
+    let imageList = msg.images;
+    let dataList = [];
+    for (var i = 0; i < jsonList.length; i++) {
+        dataList.push(new ProjectData(jsonList[i], imageList[i]));
+    }
+    getPjComponentsFromPage().forEach((pjComp, i) => pjComp.setData(dataList[i]));
+}
+function getPjComponentsFromPage() {
+    var pjCompList = [];
+    //	for (const node of figma.currentPage.selection)
     for (const node of figma.currentPage.children) {
         if (node.name == "@Project") {
-            const pjFrame = node;
-            const imageNode = pjFrame.findOne(n => n.name == "@thumbnail");
-            return imageNode; //とれてる
+            const comp = new ProjectComponent(node);
+            pjCompList.push(comp);
         }
     }
+    return pjCompList;
 }
