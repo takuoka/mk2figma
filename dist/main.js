@@ -9,7 +9,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 const FigmaUtil = {
     setImage: function (target, imgData) {
-        const imageHash = figma.createImage(imgData).hash;
+        var imageHash = "";
+        // avoid error of image type
+        try {
+            imageHash = figma.createImage(imgData).hash;
+        }
+        catch (error) {
+            console.log(error);
+        }
+        if (imageHash.length == 0) {
+            return;
+        }
         const currentFills = target['fills'];
         const newFill = {
             type: 'IMAGE',
@@ -87,7 +97,11 @@ function onFetchPrjectObj(msg) {
     for (var i = 0; i < jsonList.length; i++) {
         dataList.push(new ProjectData(jsonList[i], imageList[i]));
     }
-    getPjComponentsFromPage().forEach((pjComp, i) => pjComp.setData(dataList[i]));
+    getPjComponentsFromPage().forEach((pjComp, i) => {
+        let maxIndex = jsonList.length - 1;
+        var loopIndex = maxIndex < i ? (i % jsonList.length) : i;
+        pjComp.setData(dataList[loopIndex]);
+    });
 }
 function getPjComponentsFromPage() {
     var pjCompList = [];

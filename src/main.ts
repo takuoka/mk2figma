@@ -27,9 +27,11 @@ function onFetchPrjectObj(msg) {
 		dataList.push(new ProjectData(jsonList[i], imageList[i]))
 	}
 
-	getPjComponentsFromPage().forEach((pjComp, i) =>
-		pjComp.setData(dataList[i])
-	)
+	getPjComponentsFromPage().forEach((pjComp, i) => {
+		let maxIndex = jsonList.length - 1
+		var loopIndex: number = maxIndex < i ? (i % jsonList.length) : i
+		pjComp.setData(dataList[loopIndex])
+	})
 }
 
 function getPjComponentsFromPage() : ProjectComponent[] {
