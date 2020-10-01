@@ -25,5 +25,12 @@ class ProjectComponent {
 		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		this.time.characters = data.timeleftText
 		this.progressText.characters = data.percent.toString()
+		this.updateProgressBar(data.percent)
+	}
+
+	private updateProgressBar(percent: number) {
+		const per = percent > 100 ? 100 : percent
+		const newWidth = this.progressArea.width * (per / 100)
+		this.progressBar.resize(newWidth, this.progressBar.height)	
 	}
 }
