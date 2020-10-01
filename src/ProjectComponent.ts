@@ -1,32 +1,29 @@
 class ProjectComponent {
 	frame: FrameNode
-	imageNode: RectangleNode
-	titleNode: TextNode
+	thubnail: RectangleNode
+	title: TextNode
+	money: TextNode
+	time: TextNode
+	progressText: TextNode
+	progressArea: RectangleNode
+	progressBar: RectangleNode
 
 	constructor(projectFrame: FrameNode) {
 		this.frame = projectFrame
-		this.imageNode = projectFrame.findOne(n => n.name == "@thumbnail") as RectangleNode
-		this.titleNode = projectFrame.findOne(n => n.name == "@title") as TextNode
+		this.thubnail = projectFrame.findOne(n => n.name == "@thumbnail") as RectangleNode
+		this.title = projectFrame.findOne(n => n.name == "@title") as TextNode
+		this.money = projectFrame.findOne(n => n.name == "@money") as TextNode
+		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
+		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
+		this.progressArea = projectFrame.findOne(n => n.name == "@progress_area") as RectangleNode
+		this.progressBar = projectFrame.findOne(n => n.name == "@progress_bar") as RectangleNode
 	}
 
 	setData(data: ProjectData) {
-		setImage(this.imageNode, data.image)
-		this.titleNode.characters = data.json["title"]
+		FigmaUtil.setImage(this.thubnail, data.image)
+		this.title.characters = data.title
+		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
+		this.time.characters = data.timeleftText
+		this.progressText.characters = data.percent.toString()
 	}
-
-}
-
-// Util
-
-function setImage(target: SceneNode, imgData: Uint8Array) {
-	const imageHash = figma.createImage(imgData).hash;
-	const currentFills = target['fills'];
-	const newFill = {
-		type: 'IMAGE',
-		opacity: 1,
-		blendMode: 'NORMAL',
-		scaleMode: 'FILL',
-		imageHash: imageHash,
-	};
-	target['fills'] = [newFill]
 }

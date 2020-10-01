@@ -7,37 +7,60 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+const FigmaUtil = {
+    setImage: function (target, imgData) {
+        const imageHash = figma.createImage(imgData).hash;
+        const currentFills = target['fills'];
+        const newFill = {
+            type: 'IMAGE',
+            opacity: 1,
+            blendMode: 'NORMAL',
+            scaleMode: 'FILL',
+            imageHash: imageHash,
+        };
+        target['fills'] = [newFill];
+    }
+};
 class ProjectComponent {
     constructor(projectFrame) {
         this.frame = projectFrame;
-        this.imageNode = projectFrame.findOne(n => n.name == "@thumbnail");
-        this.titleNode = projectFrame.findOne(n => n.name == "@title");
+        this.thubnail = projectFrame.findOne(n => n.name == "@thumbnail");
+        this.title = projectFrame.findOne(n => n.name == "@title");
+        this.money = projectFrame.findOne(n => n.name == "@money");
+        this.time = projectFrame.findOne(n => n.name == "@time");
+        this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
+        this.progressArea = projectFrame.findOne(n => n.name == "@progress_area");
+        this.progressBar = projectFrame.findOne(n => n.name == "@progress_bar");
     }
     setData(data) {
-        setImage(this.imageNode, data.image);
-        this.titleNode.characters = data.json["title"];
+        FigmaUtil.setImage(this.thubnail, data.image);
+        this.title.characters = data.title;
+        this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円";
+        this.time.characters = data.timeleftText;
+        this.progressText.characters = data.percent.toString();
     }
 }
-// Util
-function setImage(target, imgData) {
-    const imageHash = figma.createImage(imgData).hash;
-    const currentFills = target['fills'];
-    const newFill = {
-        type: 'IMAGE',
-        opacity: 1,
-        blendMode: 'NORMAL',
-        scaleMode: 'FILL',
-        imageHash: imageHash,
-    };
-    target['fills'] = [newFill];
-}
 class ProjectData {
-    constructor(pj, image) {
-        this.json = pj;
+    constructor(json, image) {
+        this.title = json["title"];
+        this.collectedMoney = json["collected_money"];
+        this.timeleftText = json["time_left_label"];
+        this.percent = json["percent"];
         this.image = image;
     }
 }
-figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" })
+const Util = {
+    formatAsJPY: function (money) {
+        var str = money.toString();
+        while (str != (str = str.replace(/^(-?\d+)(\d{3})/, "$1,$2")))
+            ;
+        return str;
+    }
+};
+Promise.all([
+    figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
+    figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" })
+])
     .then(() => main());
 function main() {
     figma.showUI(__html__, { visible: false });

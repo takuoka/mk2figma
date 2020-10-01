@@ -1,5 +1,8 @@
-figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" })
-	.then( ()=> main() )
+Promise.all([
+	figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
+	figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" })
+])
+.then( ()=> main() )
 
 function main(){
 	figma.showUI(__html__, { visible: false })
