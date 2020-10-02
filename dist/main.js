@@ -136,20 +136,23 @@ Promise.all([
 ])
     .then(() => main());
 function main() {
+    if (figma.currentPage.selection.length == 0) {
+        figma.notify("👋 Plese select your components & re-run plugin (⌥ + ⌘ + P).");
+        figma.closePlugin();
+    }
     (new NetworkHTML()).fetchProjectData()
         .then(_dataList => {
         let dataList = Util.shuffleArray(_dataList);
-        getPjComponentsFromPage().forEach((pjComp, i) => {
+        getPjComponentsFromSelection().forEach((pjComp, i) => {
             let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
             pjComp.setData(dataList[loopIndex]);
         });
         figma.closePlugin();
     });
 }
-function getPjComponentsFromPage() {
+function getPjComponentsFromSelection() {
     var pjCompList = [];
-    //	for (const node of figma.currentPage.selection)
-    for (const node of figma.currentPage.children) {
+    for (const node of figma.currentPage.selection) {
         if (node.name == "@Project") {
             const comp = new ProjectComponent(node);
             pjCompList.push(comp);
