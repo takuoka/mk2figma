@@ -1,3 +1,5 @@
+<img src="https://github.com/takuoka/mk2figma/blob/master/demo.gif?raw=true">
+
 ## Installation
 
 1. Clone or download this repository
