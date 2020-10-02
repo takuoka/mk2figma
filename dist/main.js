@@ -7,15 +7,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var spareImages = [];
+var spareImageIdList = [];
 const FigmaUtil = {
-    setImage: function (target, imgData) {
+    setImage: function (target, imgData, imageId) {
         var imageHash = "";
-        // avoid error of image type
+        var isUnsupportedImage = false;
         try {
             imageHash = figma.createImage(imgData).hash;
         }
         catch (error) {
             console.log(error);
+            isUnsupportedImage = true;
+        }
+        if (isUnsupportedImage) {
+            var spareImg = spareImages[Math.floor(Math.random() * spareImages.length)];
+            if (spareImg != undefined) {
+                imageHash = figma.createImage(spareImg).hash;
+            }
+        }
+        else {
+            var isAlreadyExist = (spareImageIdList.indexOf(imageId) >= 0);
+            if (!isAlreadyExist) {
+                spareImages.push(imgData);
+                spareImageIdList.push(imageId);
+                console.log("spare iamge is aadded.  lentgh: " + spareImages.length);
+            }
         }
         if (imageHash.length == 0) {
             return;
@@ -70,7 +87,7 @@ class ProjectComponent {
         this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progressBarSpacer");
     }
     setData(data) {
-        FigmaUtil.setImage(this.thubnail, data.image);
+        FigmaUtil.setImage(this.thubnail, data.image, data.id);
         this.title.characters = data.title;
         this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円";
         this.time.characters = data.timeleftText;
@@ -86,6 +103,7 @@ class ProjectComponent {
 }
 class ProjectData {
     constructor(json, image) {
+        this.id = json["id"];
         this.title = json["title"];
         this.collectedMoney = json["collected_money"];
         this.timeleftText = json["time_left_label"];
@@ -99,6 +117,17 @@ const Util = {
         while (str != (str = str.replace(/^(-?\d+)(\d{3})/, "$1,$2")))
             ;
         return str;
+    },
+    shuffleArray: function (array) {
+        var currentIndex = array.length, temporaryValue, randomIndex;
+        while (0 !== currentIndex) {
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+            temporaryValue = array[currentIndex];
+            array[currentIndex] = array[randomIndex];
+            array[randomIndex] = temporaryValue;
+        }
+        return array;
     }
 };
 Promise.all([
@@ -108,7 +137,8 @@ Promise.all([
     .then(() => main());
 function main() {
     (new NetworkHTML()).fetchProjectData()
-        .then(dataList => {
+        .then(_dataList => {
+        let dataList = Util.shuffleArray(_dataList);
         getPjComponentsFromPage().forEach((pjComp, i) => {
             let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
             pjComp.setData(dataList[loopIndex]);

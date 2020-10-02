@@ -19,7 +19,7 @@ class ProjectComponent {
 	}
 
 	setData(data: ProjectData) {
-		FigmaUtil.setImage(this.thubnail, data.image)
+		FigmaUtil.setImage(this.thubnail, data.image, data.id)
 		this.title.characters = data.title
 		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		this.time.characters = data.timeleftText

@@ -6,7 +6,8 @@ Promise.all([
 
 function main(){
 	(new NetworkHTML()).fetchProjectData()
-		.then(dataList => {			
+		.then(_dataList => {		
+			let dataList = Util.shuffleArray(_dataList)
 			getPjComponentsFromPage().forEach((pjComp, i) => {
 				let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
 				pjComp.setData(dataList[loopIndex])
