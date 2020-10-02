@@ -39,7 +39,6 @@ class ProjectComponent {
         this.money = projectFrame.findOne(n => n.name == "@money");
         this.time = projectFrame.findOne(n => n.name == "@time");
         this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
-        this.progressArea = projectFrame.findOne(n => n.name == "@progress_area");
         this.progressBar = projectFrame.findOne(n => n.name == "@progress_bar");
     }
     setData(data) {
@@ -47,13 +46,25 @@ class ProjectComponent {
         this.title.characters = data.title;
         this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円";
         this.time.characters = data.timeleftText;
-        this.progressText.characters = data.percent.toString();
-        this.updateProgressBar(data.percent);
+        this.progressText.characters = data.percent.toString() + "%";
+        this.updateProgressBar(data.percent, this.progressBar);
     }
-    updateProgressBar(percent) {
+    updateProgressBar(percent, bar) {
         const per = percent > 100 ? 100 : percent;
-        const newWidth = this.progressArea.width * (per / 100);
-        this.progressBar.resize(newWidth, this.progressBar.height);
+        const position = per / 100;
+        const activeColor = new RGB("#A5F117");
+        const areaColor = new RGB("#EAEBEE");
+        const gradientFill = {
+            type: 'GRADIENT_LINEAR',
+            gradientTransform: [[1, 0, 0], [0, 1, 0]],
+            gradientStops: [
+                { position: 0, color: { r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1 } },
+                { position: position, color: { r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1 } },
+                { position: position, color: { r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1 } },
+                { position: 1, color: { r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1 } },
+            ]
+        };
+        bar['fills'] = [gradientFill];
     }
 }
 class ProjectData {
@@ -63,6 +74,22 @@ class ProjectData {
         this.timeleftText = json["time_left_label"];
         this.percent = json["percent"];
         this.image = image;
+    }
+}
+class RGB {
+    constructor(hex) {
+        var rgb = this.hexToRgb(hex);
+        this.r01 = rgb.r / 255;
+        this.g01 = rgb.g / 255;
+        this.b01 = rgb.b / 255;
+    }
+    hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+            r: parseInt(result[1], 16),
+            g: parseInt(result[2], 16),
+            b: parseInt(result[3], 16)
+        } : null;
     }
 }
 class Requester {

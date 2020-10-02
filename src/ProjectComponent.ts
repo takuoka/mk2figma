@@ -5,7 +5,6 @@ class ProjectComponent {
 	money: TextNode
 	time: TextNode
 	progressText: TextNode
-	progressArea: RectangleNode
 	progressBar: RectangleNode
 
 	constructor(projectFrame: FrameNode) {
@@ -15,7 +14,6 @@ class ProjectComponent {
 		this.money = projectFrame.findOne(n => n.name == "@money") as TextNode
 		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
 		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
-		this.progressArea = projectFrame.findOne(n => n.name == "@progress_area") as RectangleNode
 		this.progressBar = projectFrame.findOne(n => n.name == "@progress_bar") as RectangleNode
 	}
 
@@ -24,13 +22,25 @@ class ProjectComponent {
 		this.title.characters = data.title
 		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		this.time.characters = data.timeleftText
-		this.progressText.characters = data.percent.toString()
-		this.updateProgressBar(data.percent)
+		this.progressText.characters = data.percent.toString() + "%"
+		this.updateProgressBar(data.percent, this.progressBar)
 	}
 
-	private updateProgressBar(percent: number) {
+	private updateProgressBar(percent: number, bar: SceneNode) {
 		const per = percent > 100 ? 100 : percent
-		const newWidth = this.progressArea.width * (per / 100)
-		this.progressBar.resize(newWidth, this.progressBar.height)	
+		const position = per / 100
+		const activeColor = new RGB("#A5F117")
+		const areaColor = new RGB("#EAEBEE")
+		const gradientFill = {
+			type: 'GRADIENT_LINEAR',
+			gradientTransform: [[1, 0, 0], [0, 1, 0]],
+			gradientStops: [
+				{position: 0 , color: {r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1}},
+				{position: position , color: {r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1}},
+				{position: position , color: {r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1}},
+				{position: 1 , color: {r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1}},
+			]
+		};
+		bar['fills'] = [gradientFill]
 	}
 }
