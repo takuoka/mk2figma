@@ -5,7 +5,7 @@ class ProjectComponent {
 	money: TextNode
 	time: TextNode
 	progressText: TextNode
-	progressBar: RectangleNode
+	progressBarSpacer: TextNode // Hack
 
 	constructor(projectFrame: FrameNode) {
 		this.frame = projectFrame
@@ -14,7 +14,8 @@ class ProjectComponent {
 		this.money = projectFrame.findOne(n => n.name == "@money") as TextNode
 		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
 		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
-		this.progressBar = projectFrame.findOne(n => n.name == "@progress_bar") as RectangleNode
+		this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progressBarSpacer") as TextNode
+
 	}
 
 	setData(data: ProjectData) {
@@ -23,24 +24,13 @@ class ProjectComponent {
 		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		this.time.characters = data.timeleftText
 		this.progressText.characters = data.percent.toString() + "%"
-		this.updateProgressBar(data.percent, this.progressBar)
+		this.updateProgressBar(data.percent, this.progressBarSpacer)
 	}
 
-	private updateProgressBar(percent: number, bar: SceneNode) {
+	private updateProgressBar(percent: number, spacer: TextNode) {
+		const MAX_NUM = 90
 		const per = percent > 100 ? 100 : percent
-		const position = per / 100
-		const activeColor = new RGB("#A5F117")
-		const areaColor = new RGB("#EAEBEE")
-		const gradientFill = {
-			type: 'GRADIENT_LINEAR',
-			gradientTransform: [[1, 0, 0], [0, 1, 0]],
-			gradientStops: [
-				{position: 0 , color: {r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1}},
-				{position: position , color: {r: activeColor.r01, g: activeColor.g01, b: activeColor.b01, a: 1}},
-				{position: position , color: {r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1}},
-				{position: 1 , color: {r: areaColor.r01, g: areaColor.g01, b: areaColor.b01, a: 1}},
-			]
-		};
-		bar['fills'] = [gradientFill]
+		const num = MAX_NUM - Math.round(MAX_NUM * (per/100))
+		spacer.characters = '.'.repeat(num)
 	}
 }
