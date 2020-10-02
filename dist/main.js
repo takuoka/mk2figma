@@ -84,7 +84,7 @@ class ProjectComponent {
         this.money = projectFrame.findOne(n => n.name == "@money");
         this.time = projectFrame.findOne(n => n.name == "@time");
         this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
-        this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progressBarSpacer");
+        this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer");
     }
     setData(data) {
         FigmaUtil.setImage(this.thubnail, data.image, data.id);
@@ -139,6 +139,7 @@ function main() {
     if (figma.currentPage.selection.length == 0) {
         figma.notify("👋 Plese select your components & re-run plugin (⌥ + ⌘ + P).");
         figma.closePlugin();
+        return;
     }
     (new NetworkHTML()).fetchProjectData()
         .then(_dataList => {
