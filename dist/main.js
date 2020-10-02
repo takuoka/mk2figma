@@ -170,12 +170,12 @@ function main() {
     });
 }
 function getPjComponentsFromSelection() {
-    var pjCompList = [];
+    var components = [];
     for (const node of figma.currentPage.selection) {
         if (node.name == "@Project") {
             const comp = new ProjectComponent(node);
-            pjCompList.push(comp);
+            components.push(comp);
         }
     }
-    return pjCompList;
+    return components;
 }

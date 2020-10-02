@@ -5,16 +5,14 @@ Promise.all([
 .then( ()=> main() )
 
 function main(){
-
 	if (figma.currentPage.selection.length == 0) {
 		figma.notify("👋 Plese select your components & re-run plugin (⌥ + ⌘ + P).")
 		figma.closePlugin()
 		return
 	}
-
 	(new NetworkHTML()).fetchProjectData()
 		.then(_dataList => {		
-			let dataList = Util.shuffleArray(_dataList)
+			let dataList: ProjectData[] = Util.shuffleArray(_dataList)
 			getPjComponentsFromSelection().forEach((pjComp, i) => {
 				let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
 				pjComp.setData(dataList[loopIndex])
@@ -24,12 +22,12 @@ function main(){
 }
 
 function getPjComponentsFromSelection() : ProjectComponent[] {
-	var pjCompList: ProjectComponent[] = []
+	var components: ProjectComponent[] = []
 	for (const node of figma.currentPage.selection) {
 		if (node.name == "@Project") {
 			const comp = new ProjectComponent(node as FrameNode)
-			pjCompList.push(comp)
+			components.push(comp)
 		}
 	}
-	return pjCompList
+	return components
 }
