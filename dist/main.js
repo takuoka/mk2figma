@@ -63,7 +63,7 @@ class NetworkHTML {
                     this.onSuccessToFetchProjectData(dataList);
                     break;
                 case 'figmaNotify':
-                    figma.notify(msg.text, { timeout: 0.1 });
+                    figma.notify(msg.text, { timeout: 800 });
             }
         });
     }
