@@ -1,31 +1,27 @@
-var spareImages: Uint8Array[] = []
-var spareImageIdList: number[] = []
+
+var imageCahce: ImageCache
 
 const FigmaUtil = {
-	setImage: function(target: SceneNode, imgData: Uint8Array, imageId: number) {
+	
+	setImage: function(target: SceneNode, imageData: Uint8Array, imageId: number) {
+		if (imageCahce == undefined) { imageCahce = new ImageCache() }
 
 		var imageHash: string = ""
-		var isUnsupportedImage = false
+		var isFailed = false
 
 		try {
-			imageHash = figma.createImage(imgData).hash;			
+			imageHash = figma.createImage(imageData).hash;
 		} catch (error) {
 			console.log(error)
-			isUnsupportedImage = true			
+			isFailed = true			
 		}
 
-		if (isUnsupportedImage) {
-			var spareImg = spareImages[Math.floor(Math.random() * spareImages.length)];
-			if (spareImg != undefined) {
-				imageHash = figma.createImage(spareImg).hash;			
+		if (isFailed) {
+			if (!imageCahce.isEmpty()) {
+				imageHash = figma.createImage(imageCahce.getRandom()).hash;			
 			}
 		} else {
-			var isAlreadyExist = (spareImageIdList.indexOf(imageId) >= 0)
-			if (!isAlreadyExist) {
-				spareImages.push(imgData)
-				spareImageIdList.push(imageId)
-				console.log("spare iamge is aadded.  lentgh: " + spareImages.length)	
-			}	
+			imageCahce.addImage(imageData, imageId)
 		}
 
 		if (imageHash.length == 0) { return }

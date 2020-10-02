@@ -7,32 +7,28 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var spareImages = [];
-var spareImageIdList = [];
+var imageCahce;
 const FigmaUtil = {
-    setImage: function (target, imgData, imageId) {
+    setImage: function (target, imageData, imageId) {
+        if (imageCahce == undefined) {
+            imageCahce = new ImageCache();
+        }
         var imageHash = "";
-        var isUnsupportedImage = false;
+        var isFailed = false;
         try {
-            imageHash = figma.createImage(imgData).hash;
+            imageHash = figma.createImage(imageData).hash;
         }
         catch (error) {
             console.log(error);
-            isUnsupportedImage = true;
+            isFailed = true;
         }
-        if (isUnsupportedImage) {
-            var spareImg = spareImages[Math.floor(Math.random() * spareImages.length)];
-            if (spareImg != undefined) {
-                imageHash = figma.createImage(spareImg).hash;
+        if (isFailed) {
+            if (!imageCahce.isEmpty()) {
+                imageHash = figma.createImage(imageCahce.getRandom()).hash;
             }
         }
         else {
-            var isAlreadyExist = (spareImageIdList.indexOf(imageId) >= 0);
-            if (!isAlreadyExist) {
-                spareImages.push(imgData);
-                spareImageIdList.push(imageId);
-                console.log("spare iamge is aadded.  lentgh: " + spareImages.length);
-            }
+            imageCahce.addImage(imageData, imageId);
         }
         if (imageHash.length == 0) {
             return;
@@ -48,6 +44,28 @@ const FigmaUtil = {
         target['fills'] = [newFill];
     }
 };
+class ImageCache {
+    constructor() {
+        this.images = [];
+        this.idList = [];
+    }
+    isEmpty() {
+        return this.images.length == 0;
+    }
+    addImage(img, id) {
+        if (!this.isExist(id)) {
+            this.images.push(img);
+            this.idList.push(id);
+            console.log("ImageChace lentgh: " + this.images.length);
+        }
+    }
+    getRandom() {
+        return this.images[Math.floor(Math.random() * this.images.length)];
+    }
+    isExist(id) {
+        return this.idList.indexOf(id) >= 0;
+    }
+}
 class NetworkHTML {
     constructor() {
         figma.showUI(__html__, { visible: false }); // network.html
