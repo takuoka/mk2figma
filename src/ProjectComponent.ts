@@ -5,7 +5,7 @@ class ProjectComponent {
 	money: TextNode
 	time: TextNode
 	progressText: TextNode
-	progressBarSpacer: TextNode // Hack
+	progressBarSpacer: TextNode // SpecialProgressBar
 
 	constructor(projectFrame: FrameNode) {
 		this.frame = projectFrame
@@ -24,10 +24,10 @@ class ProjectComponent {
 		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		this.time.characters = data.timeleftText
 		this.progressText.characters = data.percent.toString() + "%"
-		this.updateProgressBar(data.percent, this.progressBarSpacer)
+		this.updateSpecialProgressBar(data.percent, this.progressBarSpacer)
 	}
 
-	private updateProgressBar(percent: number, spacer: TextNode) {
+	private updateSpecialProgressBar(percent: number, spacer: TextNode) {
 		const MAX_NUM = 90
 		const per = percent > 100 ? 100 : percent
 		const num = MAX_NUM - Math.round(MAX_NUM * (per/100))
