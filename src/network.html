@@ -28,8 +28,9 @@ async function fetchPJData() {
             var projectListLength = result.projects.length;
             var imageFinishCount = 0;
 
-            result.projects.forEach((pj, index) => {
+            console.log("Downloading image...")
 
+            result.projects.forEach((pj, index) => {
                 console.log("let's get imamge....  pj   [" + index + "] " + pj.title)
                 fetchImageToArray(index, pj.image_url, imgArray)
                     .then(()=> {
@@ -91,5 +92,17 @@ async function fetchProjectsJSON() {
     //         console.log("fetch error!")
     //         console.log(err)
     //     })
+}
+
+function figmaNotify(text) {
+    parent.postMessage(
+        {
+            pluginMessage: {
+                type: 'figmaNotify',
+                text: text,
+            }
+        },
+        '*'
+    );
 }
 </script>

@@ -5,8 +5,7 @@ Promise.all([
 .then( ()=> main() )
 
 function main(){
-	const requester = new Requester()
-	requester.fetchProjectData()
+	(new NetworkHTML()).fetchProjectData()
 		.then(dataList => {			
 			getPjComponentsFromPage().forEach((pjComp, i) => {
 				let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
