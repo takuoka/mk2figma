@@ -14,7 +14,7 @@ class ProjectComponent {
 		this.money = projectFrame.findOne(n => n.name == "@money") as TextNode
 		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
 		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
-		this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progressBarSpacer") as TextNode
+		this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer") as TextNode
 
 	}
 
