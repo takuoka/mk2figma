@@ -28,7 +28,7 @@ async function fetchPJData() {
 
     var timer = setTimeout(function() {
         isEnableFigmaNotify = true;
-        figmaNotifyIfEnable("Downloading image...")
+        figmaNotifyIfEnable("⬇️ Downloading new images...")
     } ,2000);
 
 
@@ -38,16 +38,16 @@ async function fetchPJData() {
             var projectListLength = result.projects.length;
             var imageFinishCount = 0;
 
-            console.log("Downloading image...")
+            console.log("⬇️ Downloading new images...")
 
             result.projects.forEach((pj, index) => {
-                console.log("let's get imamge....  pj   [" + index + "] " + pj.title)
+                console.log("⬇️ let's get new imamges....  pj   [" + index + "] " + pj.title)
                 fetchImageToArray(index, pj.image_url, imgArray)
                     .then(()=> {
                         imageFinishCount++;
-                        figmaNotifyIfEnable("image is loading...  " + imageFinishCount + "/" + projectListLength)
+                        figmaNotifyIfEnable("⬇️ new image is loading...  " + imageFinishCount + "/" + projectListLength)
                         if(imageFinishCount == projectListLength) {
-                            figmaNotifyIfEnable("finish to get all images!")
+                            figmaNotifyIfEnable("✅ Finished to get all images!")
                             clearTimeout(timer)
                             parent.postMessage(
                                 {
