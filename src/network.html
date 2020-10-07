@@ -45,7 +45,7 @@ async function fetchPJData() {
                 fetchImageToArray(index, pj.image_url, imgArray)
                     .then(()=> {
                         imageFinishCount++;
-                        figmaNotifyIfEnable("⬇️ new image is loading...  " + imageFinishCount + "/" + projectListLength)
+                        figmaNotifyIfEnable("⬇️ Downloading new images...  " + imageFinishCount + "/" + projectListLength)
                         if(imageFinishCount == projectListLength) {
                             figmaNotifyIfEnable("✅ Finished to get all images!")
                             clearTimeout(timer)
