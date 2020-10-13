@@ -17,36 +17,43 @@ var isEnableFigmaNotify = false
 window.onmessage = event => {
     switch (event.data.pluginMessage.type) {
         case 'fetchProjectsJSON':
-            fetchPJData();
+            const limit = event.data.pluginMessage.limit;
+            fetchPJData(limit);
             break;
     }
 };
 
-async function fetchPJData() {
+async function fetchPJData(limit) {
     let proxyurl = 'https://figma-proxy-server.herokuapp.com/';
     let imgArray = [];
 
     var timer = setTimeout(function() {
         isEnableFigmaNotify = true;
-        figmaNotifyIfEnable("⬇️ Downloading new images...")
-    } ,2000);
+        figmaNotifyIfEnable("⌛ Downloading new images...")
+    } ,4000);
 
 
     fetchProjectsJSON()
         .then(async result => {
 
-            var projectListLength = result.projects.length;
+            const fetchLimit = Math.min(result.projects.length, limit);
             var imageFinishCount = 0;
 
-            console.log("⬇️ Downloading new images...")
+            console.log("Downloading new images...  limit: " + fetchLimit);
 
-            result.projects.forEach((pj, index) => {
+            const shuffledProjects = shuffleArray(result.projects);
+            const fetchingProjects =  shuffledProjects.slice(0, fetchLimit);
+
+            console.log("fetchingProjects.length: " + fetchingProjects.length);
+
+            fetchingProjects.forEach((pj, index) => {
                 console.log("⬇️ let's get new imamges....  pj   [" + index + "] " + pj.title)
                 fetchImageToArray(index, pj.image_url, imgArray)
                     .then(()=> {
+                        console.log("👌 Finish! : " + pj.title);
                         imageFinishCount++;
-                        figmaNotifyIfEnable("⬇️ Downloading new images...  " + imageFinishCount + "/" + projectListLength)
-                        if(imageFinishCount == projectListLength) {
+                        figmaNotifyIfEnable("⬇️ Downloading new images...  " + imageFinishCount + "/" + fetchLimit)
+                        if(imageFinishCount >= fetchLimit) {
                             figmaNotifyIfEnable("✅ Finished to get all images!")
                             clearTimeout(timer)
                             parent.postMessage(
@@ -119,5 +126,17 @@ function figmaNotifyIfEnable(text) {
         );
     }
     console.log(text)
+}
+
+function shuffleArray(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+    return array;
 }
 </script>

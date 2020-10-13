@@ -1,6 +1,8 @@
 Promise.all([
 	figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
-	figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" })
+	figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W6" }),
+	figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" }),
+	figma.loadFontAsync({ family: "Hiragino Sans", style: "W6" })
 ])
 .then( ()=> main() )
 
@@ -10,15 +12,16 @@ function main(){
 		figma.closePlugin()
 		return
 	}
-	(new NetworkHTML()).fetchProjectData()
-		.then(_dataList => {		
-			let dataList: ProjectData[] = Util.shuffleArray(_dataList)
-			getPjComponentsFromSelection().forEach((pjComp, i) => {
-				let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
-				pjComp.setData(dataList[loopIndex])
-			})
-			figma.closePlugin()
+
+	const components: ProjectComponent[] = getPjComponentsFromSelection();
+
+	(new NetworkHTML()).fetchProjectData(components.length).then(dataList => {		
+		components.forEach((component, i) => {
+			let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
+			component.setData(dataList[loopIndex])
 		})
+		figma.closePlugin()
+	})
 }
 
 function getPjComponentsFromSelection() : ProjectComponent[] {

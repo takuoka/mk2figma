@@ -25,10 +25,10 @@ class NetworkHTML {
         };
     }
 
-    async fetchProjectData(): Promise<ProjectData[]> {
+    async fetchProjectData(limit: number): Promise<ProjectData[]> {
         return new Promise((resolve, reject) => {
             this.onSuccessToFetchProjectData = ( dataList => resolve(dataList))
-            figma.ui.postMessage({ type: 'fetchProjectsJSON' })
+            figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit})
         })
     }
 }

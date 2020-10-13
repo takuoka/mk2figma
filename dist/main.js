@@ -85,11 +85,11 @@ class NetworkHTML {
             }
         });
     }
-    fetchProjectData() {
+    fetchProjectData(limit) {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 this.onSuccessToFetchProjectData = (dataList => resolve(dataList));
-                figma.ui.postMessage({ type: 'fetchProjectsJSON' });
+                figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit });
             });
         });
     }
@@ -135,22 +135,13 @@ const Util = {
         while (str != (str = str.replace(/^(-?\d+)(\d{3})/, "$1,$2")))
             ;
         return str;
-    },
-    shuffleArray: function (array) {
-        var currentIndex = array.length, temporaryValue, randomIndex;
-        while (0 !== currentIndex) {
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
-        return array;
     }
 };
 Promise.all([
     figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
-    figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" })
+    figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W6" }),
+    figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" }),
+    figma.loadFontAsync({ family: "Hiragino Sans", style: "W6" })
 ])
     .then(() => main());
 function main() {
@@ -159,12 +150,11 @@ function main() {
         figma.closePlugin();
         return;
     }
-    (new NetworkHTML()).fetchProjectData()
-        .then(_dataList => {
-        let dataList = Util.shuffleArray(_dataList);
-        getPjComponentsFromSelection().forEach((pjComp, i) => {
+    const components = getPjComponentsFromSelection();
+    (new NetworkHTML()).fetchProjectData(components.length).then(dataList => {
+        components.forEach((component, i) => {
             let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
-            pjComp.setData(dataList[loopIndex]);
+            component.setData(dataList[loopIndex]);
         });
         figma.closePlugin();
     });
