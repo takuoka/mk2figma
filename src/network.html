@@ -38,36 +38,36 @@ async function fetchPJData(limit) {
 
             const fetchLimit = Math.min(result.projects.length, limit);
             var imageFinishCount = 0;
-
             console.log("Downloading new images...  limit: " + fetchLimit);
 
             const shuffledProjects = shuffleArray(result.projects);
             const fetchingProjects =  shuffledProjects.slice(0, fetchLimit);
-
             console.log("fetchingProjects.length: " + fetchingProjects.length);
 
             fetchingProjects.forEach((pj, index) => {
-                console.log("⬇️ let's get new imamges....  pj   [" + index + "] " + pj.title)
-                fetchImageToArray(index, pj.image_url, imgArray)
-                    .then(()=> {
-                        console.log("👌 Finish! : " + pj.title);
-                        imageFinishCount++;
-                        figmaNotifyIfEnable("⬇️ Downloading new images...  " + imageFinishCount + "/" + fetchLimit)
-                        if(imageFinishCount >= fetchLimit) {
-                            figmaNotifyIfEnable("✅ Finished to get all images!")
-                            clearTimeout(timer)
-                            parent.postMessage(
-                                {
-                                    pluginMessage: {
-                                        type: 'onFetchProjectsData',
-                                        images: imgArray,
-                                        projects: result.projects
-                                    }
-                                },
-                                '*'
-                            );
-                        }
-                    });
+                console.log("start to download images....  pj   [" + index + "] " + pj.title)
+
+                fetchImageToArray(index, pj.image_url, imgArray).then(()=> {
+
+                    console.log("done: " + pj.title);
+                    imageFinishCount++;
+                    figmaNotifyIfEnable("⬇️ Downloading new images...  " + imageFinishCount + "/" + fetchLimit)
+
+                    if(imageFinishCount >= fetchLimit) {
+                        figmaNotifyIfEnable("✅ Finished to get all images!")
+                        clearTimeout(timer)
+                        parent.postMessage(
+                            {
+                                pluginMessage: {
+                                    type: 'onFetchProjectsData',
+                                    images: imgArray,
+                                    projects: result.projects
+                                }
+                            },
+                            '*'
+                        );
+                    }
+                });
             });
         })
 }
