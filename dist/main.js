@@ -76,7 +76,10 @@ class NetworkHTML {
                     let imageList = msg.images;
                     let dataList = [];
                     for (var i = 0; i < jsonList.length; i++) {
-                        dataList.push(new ProjectData(jsonList[i], imageList[i]));
+                        var json = jsonList[i];
+                        if (json["project"]) {
+                            dataList.push(new ProjectData(jsonList[i], imageList[i]));
+                        }
                     }
                     this.onSuccessToFetchProjectData(dataList);
                     break;
@@ -135,9 +138,9 @@ class ProjectData {
     constructor(json, image) {
         this.id = json["id"];
         this.title = json["title"];
-        this.collectedMoney = json["collected_money"];
-        this.timeleftText = json["time_left_label"];
-        this.percent = json["percent"];
+        this.collectedMoney = json["project"]["collected_money"];
+        this.timeleftText = json["project"]["time_left_label"];
+        this.percent = json["project"]["percent"];
         this.image = image;
     }
 }

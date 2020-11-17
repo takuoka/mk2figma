@@ -9,9 +9,9 @@ class ProjectData {
 	constructor(json: any, image: Uint8Array) {
 		this.id = json["id"]
 		this.title = json["title"]
-		this.collectedMoney = json["collected_money"]
-		this.timeleftText = json["time_left_label"]
-		this.percent = json["percent"]
+		this.collectedMoney = json["project"]["collected_money"]
+		this.timeleftText = json["project"]["time_left_label"]
+		this.percent = json["project"]["percent"]
 		this.image = image
 	}
 }

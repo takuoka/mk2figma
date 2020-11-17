@@ -14,7 +14,10 @@ class NetworkHTML {
                 
                     let dataList: ProjectData[] = []
                     for (var i = 0; i < jsonList.length; i++) {
-                        dataList.push(new ProjectData(jsonList[i], imageList[i]))
+                        var json = jsonList[i];
+                        if (json["project"]) {
+                            dataList.push(new ProjectData(jsonList[i], imageList[i]))
+                        }
                     }       
                     this.onSuccessToFetchProjectData(dataList)
                     break;
