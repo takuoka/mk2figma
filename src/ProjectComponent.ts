@@ -4,6 +4,8 @@ class ProjectComponent {
 	title: TextNode
 	money: TextNode
 	time: TextNode
+	elapsedTime: TextNode
+	tagName: TextNode
 	progressText: TextNode
 	progressBarSpacer: TextNode // SpecialProgressBar
 
@@ -13,6 +15,8 @@ class ProjectComponent {
 		this.title = projectFrame.findOne(n => n.name == "@title") as TextNode
 		this.money = projectFrame.findOne(n => n.name == "@money") as TextNode
 		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
+		this.elapsedTime = projectFrame.findOne(n => n.name == "@elapsed_time_label") as TextNode
+		this.tagName = projectFrame.findOne(n => n.name == "@tag") as TextNode
 		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
 		this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer") as TextNode
 	}
@@ -24,17 +28,23 @@ class ProjectComponent {
 		if (this.title) {
 			this.title.characters = data.title
 		}
-		if (this.money) {
+		if (this.money && data.collectedMoney) {
 			this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
 		}
-		if (this.time) {
+		if (this.time && data.timeleftText) {
 			this.time.characters = data.timeleftText			
 		}
-		if (this.progressText) {
+		if (this.progressText && data.percent) {
 			this.progressText.characters = data.percent.toString() + "%"			
 		}
-		if (this.progressBarSpacer) {
+		if (this.progressBarSpacer && data.percent) {
 			this.updateSpecialProgressBar(data.percent, this.progressBarSpacer)
+		}
+		if (data.elapsed_time_label && this.elapsedTime) {
+			this.elapsedTime.characters = data.elapsed_time_label
+		}
+		if (data.tagName && this.tagName) {
+			this.tagName.characters = "#" + data.tagName
 		}
 	}
 

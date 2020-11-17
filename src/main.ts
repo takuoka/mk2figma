@@ -31,6 +31,13 @@ function getPjComponentsFromSelection() : ProjectComponent[] {
 			const comp = new ProjectComponent(node as FrameNode)
 			components.push(comp)
 		}
+		var frameNode = node as FrameNode
+		if (frameNode) {
+			var pjNode = frameNode.findOne(n => n.name == "@Project") as FrameNode
+			if (pjNode) {
+				components.push(new ProjectComponent(pjNode as FrameNode))	
+			}
+		}
 	}
 	return components
 }

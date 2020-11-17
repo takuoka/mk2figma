@@ -101,6 +101,8 @@ class ProjectComponent {
         this.title = projectFrame.findOne(n => n.name == "@title");
         this.money = projectFrame.findOne(n => n.name == "@money");
         this.time = projectFrame.findOne(n => n.name == "@time");
+        this.elapsedTime = projectFrame.findOne(n => n.name == "@elapsed_time_label");
+        this.tagName = projectFrame.findOne(n => n.name == "@tag");
         this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
         this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer");
     }
@@ -111,17 +113,23 @@ class ProjectComponent {
         if (this.title) {
             this.title.characters = data.title;
         }
-        if (this.money) {
+        if (this.money && data.collectedMoney) {
             this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円";
         }
-        if (this.time) {
+        if (this.time && data.timeleftText) {
             this.time.characters = data.timeleftText;
         }
-        if (this.progressText) {
+        if (this.progressText && data.percent) {
             this.progressText.characters = data.percent.toString() + "%";
         }
-        if (this.progressBarSpacer) {
+        if (this.progressBarSpacer && data.percent) {
             this.updateSpecialProgressBar(data.percent, this.progressBarSpacer);
+        }
+        if (data.elapsed_time_label && this.elapsedTime) {
+            this.elapsedTime.characters = data.elapsed_time_label;
+        }
+        if (data.tagName && this.tagName) {
+            this.tagName.characters = "#" + data.tagName;
         }
     }
     updateSpecialProgressBar(percent, spacer) {
@@ -139,6 +147,12 @@ class ProjectData {
         this.timeleftText = json["time_left_label"];
         this.percent = json["percent"];
         this.image = image;
+        this.elapsed_time_label = json["elapsed_time_label"];
+        this.tagName = json["tags"][0]["name"];
+        console.log("❗❗❗❗❗❗❗❗❗❗");
+        console.log(this.tagName);
+        console.log(json["tags"]);
+        console.log(this.tagName);
     }
 }
 const Util = {
@@ -177,6 +191,13 @@ function getPjComponentsFromSelection() {
         if (node.name == "@Project") {
             const comp = new ProjectComponent(node);
             components.push(comp);
+        }
+        var frameNode = node;
+        if (frameNode) {
+            var pjNode = frameNode.findOne(n => n.name == "@Project");
+            if (pjNode) {
+                components.push(new ProjectComponent(pjNode));
+            }
         }
     }
     return components;
