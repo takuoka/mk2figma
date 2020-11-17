@@ -15,16 +15,27 @@ class ProjectComponent {
 		this.time = projectFrame.findOne(n => n.name == "@time") as TextNode
 		this.progressText = projectFrame.findOne(n => n.name == "@progress_num") as TextNode
 		this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer") as TextNode
-
 	}
 
 	setData(data: ProjectData) {
-		FigmaUtil.setImage(this.thubnail, data.image, data.id)
-		this.title.characters = data.title
-		this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
-		this.time.characters = data.timeleftText
-		this.progressText.characters = data.percent.toString() + "%"
-		this.updateSpecialProgressBar(data.percent, this.progressBarSpacer)
+		if (this.thubnail) {
+			FigmaUtil.setImage(this.thubnail, data.image, data.id)
+		}
+		if (this.title) {
+			this.title.characters = data.title
+		}
+		if (this.money) {
+			this.money.characters = Util.formatAsJPY(data.collectedMoney) + "円"
+		}
+		if (this.time) {
+			this.time.characters = data.timeleftText			
+		}
+		if (this.progressText) {
+			this.progressText.characters = data.percent.toString() + "%"			
+		}
+		if (this.progressBarSpacer) {
+			this.updateSpecialProgressBar(data.percent, this.progressBarSpacer)
+		}
 	}
 
 	private updateSpecialProgressBar(percent: number, spacer: TextNode) {
