@@ -174,7 +174,7 @@ function main() {
 function getPjComponentsFromSelection() {
     var components = [];
     for (const node of figma.currentPage.selection) {
-        if (node.name == "@Project") {
+        if (node.name.includes("@Project")) {
             const comp = new ProjectComponent(node);
             components.push(comp);
         }
