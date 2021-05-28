@@ -15,7 +15,8 @@ function main(){
 
 	const components: ProjectComponent[] = getPjComponentsFromSelection();
 
-	(new NetworkHTML()).fetchProjectData(components.length).then(dataList => {		
+	// 🚧👋 limit = components.length * 2
+	(new NetworkHTML()).fetchProjectData(components.length * 2).then(dataList => {		
 		components.forEach((component, i) => {
 			let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
 			component.setData(dataList[loopIndex])
