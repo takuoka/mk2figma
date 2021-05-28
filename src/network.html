@@ -37,8 +37,10 @@ async function fetchPJData(limit) {
 
             // const shuffledProjects = shuffleArray(result.projects);
             // const fetchingProjects =  shuffledProjects.slice(0, fetchLimit);
-            var fetchingProjects =  result.projects.slice(0, fetchLimit);
+            var fetchingProjects =  result.projects.slice(skipPJ).slice(0, fetchLimit);
+            fetchLimit = fetchingProjects.length;
             console.log("fetchingProjects.length: " + fetchingProjects.length);
+            console.log(fetchingProjects);
 
             if (isExcludeNonVideoPJ) {
                 const videoPjIdList = videoProjectIds_2021_0528_from_0520()

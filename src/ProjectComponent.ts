@@ -18,9 +18,6 @@ class ProjectComponent {
 	}
 
 	setData(data: ProjectData) {
-		if (this.thubnail) {
-			FigmaUtil.setImage(this.thubnail, data.image, data.id)
-		}
 		if (this.title) {
 			this.title.characters = data.title
 		}
@@ -35,6 +32,9 @@ class ProjectComponent {
 		}
 		if (this.progressBarSpacer) {
 			this.updateSpecialProgressBar(data.percent, this.progressBarSpacer)
+		}
+		if (this.thubnail) {
+			FigmaUtil.setImage(this.thubnail, data.image, data.id)
 		}
 	}
 
