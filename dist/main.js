@@ -14,7 +14,7 @@ function main() {
         figma.closePlugin();
         return;
     }
-    const components = ProjectComponent.getComponentsFromSelection();
+    const components = ProjectComponent.findComponents(figma.currentPage.selection);
     const networkHtml = new NetworkHTML();
     const limit = Math.max(30, components.length * 2);
     networkHtml.fetchProjectData(limit).then(dataList => {
@@ -35,12 +35,11 @@ class ProjectComponent {
         this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
         this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer");
     }
-    static getComponentsFromSelection() {
+    static findComponents(nodes) {
         var components = [];
-        for (const node of figma.currentPage.selection) {
+        for (const node of nodes) {
             if (node.name.includes("@Project")) {
-                const comp = new ProjectComponent(node);
-                components.push(comp);
+                components.push(new ProjectComponent(node));
             }
         }
         return components;
@@ -108,6 +107,22 @@ class NetworkHTML {
                 figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit });
             });
         });
+    }
+}
+class BoomSection {
+    start() {
+    }
+    getBoomSection(firstViewChildren) {
+        for (const node of firstViewChildren) {
+            if (node.name.includes("@BoomSection")) {
+                return node;
+            }
+        }
+        return null;
+    }
+    fetchData() {
+    }
+    applyData() {
     }
 }
 var imageCahce;

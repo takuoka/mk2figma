@@ -1,11 +1,10 @@
 class ProjectComponent {
 
-	static getComponentsFromSelection() : ProjectComponent[] {
+	static findComponents(nodes: readonly SceneNode[]) : ProjectComponent[] {
 		var components: ProjectComponent[] = []
-		for (const node of figma.currentPage.selection) {
+		for (const node of nodes) {
 			if (node.name.includes("@Project")) {
-				const comp = new ProjectComponent(node as FrameNode)
-				components.push(comp)
+				components.push(new ProjectComponent(node as FrameNode))
 			}
 		}
 		return components

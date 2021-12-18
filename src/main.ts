@@ -7,7 +7,7 @@ function main(){
 		return
 	}
 
-	const components: ProjectComponent[] = ProjectComponent.getComponentsFromSelection()
+	const components: ProjectComponent[] = ProjectComponent.findComponents(figma.currentPage.selection)
 
 	const networkHtml = new NetworkHTML()
 	const limit = Math.max(30, components.length * 2)
