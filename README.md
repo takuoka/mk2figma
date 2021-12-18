@@ -9,3 +9,8 @@
 
 ## Usage
 Run This plugin from menu.
+
+## How to dev
+Type 'cmd + shift + b' on VSCode.
+(tsc watch tsconfig.json)
+(tsc build tsconfig.json)

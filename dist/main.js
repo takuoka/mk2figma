@@ -7,92 +7,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var imageCahce;
-const FigmaUtil = {
-    setImage: function (target, imageData, imageId) {
-        if (imageCahce == undefined) {
-            imageCahce = new ImageCache();
-        }
-        var imageHash = "";
-        var isFailed = false;
-        try {
-            imageHash = figma.createImage(imageData).hash;
-        }
-        catch (error) {
-            console.log(error);
-            isFailed = true;
-        }
-        if (isFailed) {
-            if (!imageCahce.isEmpty()) {
-                imageHash = figma.createImage(imageCahce.getRandom()).hash;
-            }
-        }
-        else {
-            imageCahce.addImage(imageData, imageId);
-        }
-        if (imageHash.length == 0) {
-            return;
-        }
-        const currentFills = target['fills'];
-        const newFill = {
-            type: 'IMAGE',
-            opacity: 1,
-            blendMode: 'NORMAL',
-            scaleMode: 'FILL',
-            imageHash: imageHash,
-        };
-        target['fills'] = [newFill];
+setTimeout(function () { FontLoader.loadFonts().then(() => main()); }, 100);
+function main() {
+    if (figma.currentPage.selection.length == 0) {
+        figma.notify("👋 Plese select your components & re-run plugin (⌥ + ⌘ + P).");
+        figma.closePlugin();
+        return;
     }
-};
-class ImageCache {
-    constructor() {
-        this.images = [];
-        this.idList = [];
-    }
-    isEmpty() {
-        return this.images.length == 0;
-    }
-    addImage(img, id) {
-        if (!this.isExist(id)) {
-            this.images.push(img);
-            this.idList.push(id);
-            console.log("ImageChace lentgh: " + this.images.length);
-        }
-    }
-    getRandom() {
-        return this.images[Math.floor(Math.random() * this.images.length)];
-    }
-    isExist(id) {
-        return this.idList.indexOf(id) >= 0;
-    }
+    const components = getPjComponentsFromSelection();
+    // 🚧👋 limit = components.length * 2
+    (new NetworkHTML()).fetchProjectData(Math.max(30, components.length * 2)).then(dataList => {
+        components.forEach((component, i) => {
+            let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
+            component.setData(dataList[loopIndex]);
+        });
+        figma.closePlugin();
+    });
 }
-class NetworkHTML {
-    constructor() {
-        figma.showUI(__html__, { visible: false }); // network.html
-        figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
-            switch (msg.type) {
-                case 'onFetchProjectsData':
-                    let jsonList = msg.projects;
-                    let imageList = msg.images;
-                    let dataList = [];
-                    for (var i = 0; i < jsonList.length; i++) {
-                        dataList.push(new ProjectData(jsonList[i], imageList[i]));
-                    }
-                    this.onSuccessToFetchProjectData(dataList);
-                    break;
-                case 'figmaNotify':
-                    figma.notify(msg.text, { timeout: 800 });
-            }
-        });
+function getPjComponentsFromSelection() {
+    var components = [];
+    for (const node of figma.currentPage.selection) {
+        if (node.name.includes("@Project")) {
+            const comp = new ProjectComponent(node);
+            components.push(comp);
+        }
     }
-    fetchProjectData(limit) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                this.onSuccessToFetchProjectData = (dataList => resolve(dataList));
-                figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit });
-            });
-        });
-    }
+    return components;
 }
 class ProjectComponent {
     constructor(projectFrame) {
@@ -141,6 +81,105 @@ class ProjectData {
         this.image = image;
     }
 }
+class NetworkHTML {
+    constructor() {
+        figma.showUI(__html__, { visible: false }); // network.html
+        figma.ui.onmessage = (msg) => __awaiter(this, void 0, void 0, function* () {
+            switch (msg.type) {
+                case 'onFetchProjectsData':
+                    let jsonList = msg.projects;
+                    let imageList = msg.images;
+                    let dataList = [];
+                    for (var i = 0; i < jsonList.length; i++) {
+                        dataList.push(new ProjectData(jsonList[i], imageList[i]));
+                    }
+                    this.onSuccessToFetchProjectData(dataList);
+                    break;
+                case 'figmaNotify':
+                    figma.notify(msg.text, { timeout: 800 });
+            }
+        });
+    }
+    fetchProjectData(limit) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                this.onSuccessToFetchProjectData = (dataList => resolve(dataList));
+                figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit });
+            });
+        });
+    }
+}
+var imageCahce;
+const FigmaUtil = {
+    setImage: function (target, imageData, imageId) {
+        if (imageCahce == undefined) {
+            imageCahce = new ImageCache();
+        }
+        var imageHash = "";
+        var isFailed = false;
+        try {
+            imageHash = figma.createImage(imageData).hash;
+        }
+        catch (error) {
+            console.log(error);
+            isFailed = true;
+        }
+        if (isFailed) {
+            if (!imageCahce.isEmpty()) {
+                imageHash = figma.createImage(imageCahce.getRandom()).hash;
+            }
+        }
+        else {
+            imageCahce.addImage(imageData, imageId);
+        }
+        if (imageHash.length == 0) {
+            return;
+        }
+        const currentFills = target['fills'];
+        const newFill = {
+            type: 'IMAGE',
+            opacity: 1,
+            blendMode: 'NORMAL',
+            scaleMode: 'FILL',
+            imageHash: imageHash,
+        };
+        target['fills'] = [newFill];
+    }
+};
+const FontLoader = {
+    loadFonts: function () {
+        return __awaiter(this, void 0, void 0, function* () {
+            return Promise.all([
+                figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
+                figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W6" }),
+                figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" }),
+                figma.loadFontAsync({ family: "Hiragino Sans", style: "W6" })
+            ]);
+        });
+    }
+};
+class ImageCache {
+    constructor() {
+        this.images = [];
+        this.idList = [];
+    }
+    isEmpty() {
+        return this.images.length == 0;
+    }
+    addImage(img, id) {
+        if (!this.isExist(id)) {
+            this.images.push(img);
+            this.idList.push(id);
+            console.log("ImageChace lentgh: " + this.images.length);
+        }
+    }
+    getRandom() {
+        return this.images[Math.floor(Math.random() * this.images.length)];
+    }
+    isExist(id) {
+        return this.idList.indexOf(id) >= 0;
+    }
+}
 const Util = {
     formatAsJPY: function (money) {
         var str = money.toString();
@@ -149,36 +188,3 @@ const Util = {
         return str;
     }
 };
-Promise.all([
-    figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
-    figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W6" }),
-    figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" }),
-    figma.loadFontAsync({ family: "Hiragino Sans", style: "W6" })
-])
-    .then(() => main());
-function main() {
-    if (figma.currentPage.selection.length == 0) {
-        figma.notify("👋 Plese select your components & re-run plugin (⌥ + ⌘ + P).");
-        figma.closePlugin();
-        return;
-    }
-    const components = getPjComponentsFromSelection();
-    // 🚧👋 limit = components.length * 2
-    (new NetworkHTML()).fetchProjectData(Math.max(30, components.length * 2)).then(dataList => {
-        components.forEach((component, i) => {
-            let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
-            component.setData(dataList[loopIndex]);
-        });
-        figma.closePlugin();
-    });
-}
-function getPjComponentsFromSelection() {
-    var components = [];
-    for (const node of figma.currentPage.selection) {
-        if (node.name.includes("@Project")) {
-            const comp = new ProjectComponent(node);
-            components.push(comp);
-        }
-    }
-    return components;
-}

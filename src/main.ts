@@ -1,10 +1,4 @@
-Promise.all([
-	figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W3" }),
-	figma.loadFontAsync({ family: "Hiragino Kaku Gothic ProN", style: "W6" }),
-	figma.loadFontAsync({ family: "Hiragino Sans", style: "W3" }),
-	figma.loadFontAsync({ family: "Hiragino Sans", style: "W6" })
-])
-.then( ()=> main() )
+setTimeout(function() { FontLoader.loadFonts().then( ()=> main() ) }, 100)
 
 function main(){
 	if (figma.currentPage.selection.length == 0) {

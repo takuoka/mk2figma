@@ -3,5 +3,5 @@
   "id": "892639798700535620",
   "api": "1.0.0",
   "main": "dist/main.js",
-  "ui": "src/network.html"
+  "ui": "src/ui/network.html"
 }
