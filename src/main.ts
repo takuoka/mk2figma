@@ -7,25 +7,15 @@ function main(){
 		return
 	}
 
-	const components: ProjectComponent[] = getPjComponentsFromSelection();
+	const components: ProjectComponent[] = ProjectComponent.getComponentsFromSelection()
 
-	// 🚧👋 limit = components.length * 2
-	(new NetworkHTML()).fetchProjectData(Math.max(30, components.length * 2)).then(dataList => {		
+	const networkHtml = new NetworkHTML()
+	const limit = Math.max(30, components.length * 2)
+	networkHtml.fetchProjectData(limit).then(dataList => {		
 		components.forEach((component, i) => {
 			let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
 			component.setData(dataList[loopIndex])
 		})
 		figma.closePlugin()
 	})
-}
-
-function getPjComponentsFromSelection() : ProjectComponent[] {
-	var components: ProjectComponent[] = []
-	for (const node of figma.currentPage.selection) {
-		if (node.name.includes("@Project")) {
-			const comp = new ProjectComponent(node as FrameNode)
-			components.push(comp)
-		}
-	}
-	return components
 }

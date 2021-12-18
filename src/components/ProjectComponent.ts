@@ -1,4 +1,16 @@
 class ProjectComponent {
+
+	static getComponentsFromSelection() : ProjectComponent[] {
+		var components: ProjectComponent[] = []
+		for (const node of figma.currentPage.selection) {
+			if (node.name.includes("@Project")) {
+				const comp = new ProjectComponent(node as FrameNode)
+				components.push(comp)
+			}
+		}
+		return components
+	}
+
 	frame: FrameNode
 	thubnail: RectangleNode
 	title: TextNode

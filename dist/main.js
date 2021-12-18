@@ -14,25 +14,16 @@ function main() {
         figma.closePlugin();
         return;
     }
-    const components = getPjComponentsFromSelection();
-    // 🚧👋 limit = components.length * 2
-    (new NetworkHTML()).fetchProjectData(Math.max(30, components.length * 2)).then(dataList => {
+    const components = ProjectComponent.getComponentsFromSelection();
+    const networkHtml = new NetworkHTML();
+    const limit = Math.max(30, components.length * 2);
+    networkHtml.fetchProjectData(limit).then(dataList => {
         components.forEach((component, i) => {
             let loopIndex = dataList.length - 1 < i ? (i % dataList.length) : i;
             component.setData(dataList[loopIndex]);
         });
         figma.closePlugin();
     });
-}
-function getPjComponentsFromSelection() {
-    var components = [];
-    for (const node of figma.currentPage.selection) {
-        if (node.name.includes("@Project")) {
-            const comp = new ProjectComponent(node);
-            components.push(comp);
-        }
-    }
-    return components;
 }
 class ProjectComponent {
     constructor(projectFrame) {
@@ -43,6 +34,16 @@ class ProjectComponent {
         this.time = projectFrame.findOne(n => n.name == "@time");
         this.progressText = projectFrame.findOne(n => n.name == "@progress_num");
         this.progressBarSpacer = projectFrame.findOne(n => n.name == "@progress_bar_spacer");
+    }
+    static getComponentsFromSelection() {
+        var components = [];
+        for (const node of figma.currentPage.selection) {
+            if (node.name.includes("@Project")) {
+                const comp = new ProjectComponent(node);
+                components.push(comp);
+            }
+        }
+        return components;
     }
     setData(data) {
         if (this.title) {
