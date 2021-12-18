@@ -1,4 +1,4 @@
-class ProjectData {
+export class ProjectData {
 	id: number
 	title: string
 	collectedMoney: number

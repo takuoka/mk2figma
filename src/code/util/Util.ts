@@ -1,5 +1,4 @@
-
-const Util = {
+export const Util = {
 
     formatAsJPY: function(money: number): string {        
         var str = money.toString()

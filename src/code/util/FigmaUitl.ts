@@ -1,7 +1,8 @@
+import { ImageCache } from "./ImageChache";
 
 var imageCahce: ImageCache
 
-const FigmaUtil = {
+export const FigmaUtil = {
 	
 	setImage: function(target: SceneNode, imageData: Uint8Array, imageId: number) {
 		if (imageCahce == undefined) { imageCahce = new ImageCache() }

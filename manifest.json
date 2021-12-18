@@ -2,6 +2,6 @@
   "name": "mk2figma",
   "id": "892639798700535620",
   "api": "1.0.0",
-  "main": "dist/main.js",
-  "ui": "src/ui/network.html"
+  "main": "dist/code.js",
+  "ui": "dist/ui.html"
 }

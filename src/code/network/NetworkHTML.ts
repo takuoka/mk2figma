@@ -1,4 +1,6 @@
-class NetworkHTML {
+import { ProjectData } from "../model/ProjectData";
+
+export class NetworkHTML {
     
     onSuccessToFetchProjectData: (dataList: ProjectData[])=>void
 
@@ -20,7 +22,7 @@ class NetworkHTML {
                     break;
 
                 case 'figmaNotify':
-                    figma.notify(msg.text, {timeout: 800})
+                    figma.notify(msg.text, {timeout: 1000})
             }
         };
     }

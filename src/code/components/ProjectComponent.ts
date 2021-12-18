@@ -1,4 +1,8 @@
-class ProjectComponent {
+import { ProjectData } from "../model/ProjectData";
+import { Util } from "../util/Util";
+import { FigmaUtil } from "../util/FigmaUitl";
+
+export class ProjectComponent {
 
 	static findComponents(nodes: readonly SceneNode[]) : ProjectComponent[] {
 		var components: ProjectComponent[] = []

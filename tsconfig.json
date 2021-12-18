@@ -4,10 +4,10 @@
     "typeRoots": [
       "./node_modules/@types",
       "./node_modules/@figma"
-    ],
-    "outFile": "./dist/main.js"
-  },
-  "include": [
-    "src/**/*"
-  ]
+    ]
+    // , "outFile": "./dist/main.js"
+  }
+  // , "include": [
+  //   "src/**/*"
+  // ]
 }

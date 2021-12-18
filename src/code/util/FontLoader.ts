@@ -1,4 +1,4 @@
-const FontLoader = {
+export const FontLoader = {
 
     loadFonts: async function() {
         return Promise.all([

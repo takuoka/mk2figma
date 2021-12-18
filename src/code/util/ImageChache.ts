@@ -1,4 +1,4 @@
-class ImageCache {
+export class ImageCache {
     private images: Uint8Array[]
     private idList: number[]
 
