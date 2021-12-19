@@ -1,5 +1,10 @@
 <img src="https://github.com/takuoka/mk2figma/blob/master/demo.gif?raw=true">
 
+# 使い方
+* metabase接続用のVPNをONにする
+* metabaseのプロキシサーバーを起動する
+* このFigmaプラグインを使う
+
 ## Installation
 
 1. Clone or download this repository

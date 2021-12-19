@@ -1,3 +1,4 @@
+import { MetabaseAPI } from "./fetchData/MetabaseAPI";
 
 var isEnableFigmaNotify = true;
 
@@ -8,6 +9,10 @@ window.onmessage = event => {
             figmaNotifyIfEnable("please implement fetch!!");
             // const limit = event.data.pluginMessage.limit;
             // fetchPJData(limit);
+
+            let metabase = new MetabaseAPI()
+            metabase.doooit()
+
             break;
         default:
             figmaNotifyIfEnable("hmm");
