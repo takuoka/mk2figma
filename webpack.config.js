@@ -49,10 +49,11 @@ module.exports = (env, argv) => ({
       global: {}, // Fix missing symbol error when running in developer VM
     }),
     new HtmlWebpackPlugin({
-      template: './src/ui/ui.html',
-      filename: 'ui.html',
-      inlineSource: '.(js)$',
-      chunks: ['ui'],
+		cache: false,
+		template: './src/ui/ui.html',
+		filename: 'ui.html',
+		inlineSource: '.(js)$',
+		chunks: ['ui'],
     }),
     new HtmlInlineScriptPlugin(),
   ],
