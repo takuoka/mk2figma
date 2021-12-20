@@ -10,8 +10,13 @@ window.onmessage = event => {
             // const limit = event.data.pluginMessage.limit;
             // fetchPJData(limit);
 
-            let metabase = new MetabaseAPI()
-            metabase.doooit()
+            MetabaseAPI.getSingleton()
+            .then(metabaseAPI => {
+                console.log("aa👋ae!! " + metabaseAPI.token)
+                metabaseAPI.fetchBoomData().then(data =>
+                    console.log(data)
+                )
+            })
 
             break;
         default:

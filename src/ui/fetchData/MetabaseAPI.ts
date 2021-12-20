@@ -5,31 +5,47 @@ const axios = require('axios');
 axios.defaults.baseURL = 'http://localhost:3000';
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=utf-8';
 axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
-
-var token = "";
-const resource = "http://localhost:3000/metabase-proxy";
-const auth = {
-	mode: 'no-cors',
-    headers: {
-		'X-Metabase-Session': token,
-		'Content-Type': 'application/json'
-	},
-	withCredentials: true,
-	credentials: 'same-origin'
-}
+const METABASE_URL = "http://localhost:3000/metabase-proxy";
 
 export class MetabaseAPI {
 
-    async getToken() {
-		return axios.post(resource+"/api/session", {username: Secrets.metabase.email, password: Secrets.metabase.password})
+	token = ""
+
+	static shared: MetabaseAPI
+
+	public static async getSingleton(): Promise<MetabaseAPI> {
+		return new Promise((resolve, reject) => {
+			if (this.shared) {
+				resolve(this.shared)
+				return
+			}
+			this.shared = new MetabaseAPI( () =>
+				resolve(this.shared)
+			)
+		});
+	}
+
+	private constructor(callback) {
+		this.fetchToken()
+		.then( token =>  {
+			this.token = token;
+			console.log("token: " + token)
+			callback();
+		})
+	}
+	
+	public async fetchBoomData() {		
+		const headers = {headers: {'X-Metabase-Session': this.token, 'Content-Type': 'application/json' }}
+		return axios.post(METABASE_URL+"/api/card/683/query/json", {}, headers)
+		.then(result => {
+			return result.data
+		})
+	}
+
+    private async fetchToken(): Promise<string> {
+		return axios.post(METABASE_URL+"/api/session", {username: Secrets.metabase.email, password: Secrets.metabase.password})
 			.then(result => {
-				return result
+				return result.data.id
 			})
     }
-
-	doooit() {
-		this.getToken().then( result =>
-			console.log(result.data)
-		)
-	}
 }
