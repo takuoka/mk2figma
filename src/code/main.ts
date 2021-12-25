@@ -14,12 +14,13 @@ function main(){
 	const components: ProjectComponent[] = ProjectComponent.findComponents(figma.currentPage.selection)
 
 	const networkHtml = new NetworkHTML()
-	const limit = Math.max(30, components.length * 2)
-	networkHtml.fetchProjectData(limit).then(dataList => {		
-		components.forEach((component, i) => {
-			let loopIndex: number = dataList.length - 1 < i ? (i % dataList.length) : i
-			component.setData(dataList[loopIndex])
-		})
+	networkHtml.fetchBoomProjects().then(projects => {		
+		console.log(projects)
+		//👋ここまできた〜〜！
+		// components.forEach((component, i) => {
+			// let loopIndex: number = projects.length - 1 < i ? (i % projects.length) : i
+			// component.setData(dataList[loopIndex])
+		// })
 		figma.closePlugin()
 	})
 }

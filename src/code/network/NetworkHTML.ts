@@ -1,36 +1,33 @@
-import { ProjectData } from "../model/ProjectData";
+import { BoomProjectData } from "../model/BoomProjectData";
 
 export class NetworkHTML {
     
-    onSuccessToFetchProjectData: (dataList: ProjectData[])=>void
+    onFetchBoomProjectsData: (message: any)=>void
 
     constructor() {
-        figma.showUI(__html__, { visible: false })// network.html
-
-        figma.ui.onmessage = async msg => {
-            switch (msg.type) {
-
-                case 'onFetchProjectsData':
-                    let jsonList: Object[] = msg.projects
-                    let imageList: Uint8Array[] = msg.images
-                
-                    let dataList: ProjectData[] = []
-                    for (var i = 0; i < jsonList.length; i++) {
-                        dataList.push(new ProjectData(jsonList[i], imageList[i]))
-                    }       
-                    this.onSuccessToFetchProjectData(dataList)
-                    break;
-
-                case 'figmaNotify':
-                    figma.notify(msg.text, {timeout: 1000})
-            }
-        };
+        figma.showUI(__html__, { visible: false })// ui.html
+        this.startListen()
     }
 
-    async fetchProjectData(limit: number): Promise<ProjectData[]> {
+    async fetchBoomProjects(): Promise<BoomProjectData[]> {
         return new Promise((resolve, reject) => {
-            this.onSuccessToFetchProjectData = (dataList => resolve(dataList))
-            figma.ui.postMessage({ type: 'fetchProjectsJSON', limit: limit})
+            this.onFetchBoomProjectsData = (message => {
+                resolve(message.projects)
+            })
+            figma.ui.postMessage({ type: 'fetchBoomProjectsJSON'})
         })
+    }
+
+    private startListen() {
+        figma.ui.onmessage = async msg => {
+            switch (msg.type) {
+                case 'onFetchBoomProjectsData':
+                    this.onFetchBoomProjectsData(msg)
+                    break
+                case 'figmaNotify':
+                    figma.notify(msg.text, {timeout: 1000})
+                    break
+            }
+        };
     }
 }

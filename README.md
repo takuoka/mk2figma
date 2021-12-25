@@ -2,7 +2,7 @@
 
 # 使い方
 * metabase接続用のVPNをONにする
-* metabaseのプロキシサーバーを起動する
+* [metabaseのプロキシサーバー](https://github.com/takuoka/metabase-proxy) を起動する
 * このFigmaプラグインを使う
 
 ## Installation

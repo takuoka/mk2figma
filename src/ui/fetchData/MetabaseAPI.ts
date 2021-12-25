@@ -29,17 +29,16 @@ export class MetabaseAPI {
 		this.fetchToken()
 		.then( token =>  {
 			this.token = token;
-			console.log("token: " + token)
 			callback();
 		})
 	}
 	
-	public async fetchBoomData() {		
+	public async fetchBoomData(): Promise<any[]> {		
 		const headers = {headers: {'X-Metabase-Session': this.token, 'Content-Type': 'application/json' }}
 		return axios.post(METABASE_URL+"/api/card/683/query/json", {}, headers)
-		.then(result => {
-			return result.data
-		})
+			.then(result => {
+				return result.data
+			})
 	}
 
     private async fetchToken(): Promise<string> {
